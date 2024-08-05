@@ -57,8 +57,8 @@ class Tile:
     return None
 
   def move(self,pos):
-    self.rect.x = 5 + pos[0] * CELL_SIZE + 10
-    self.rect.y = 5 + pos[1] * CELL_SIZE + 10
+    self.rect.x = 5 + pos[1] * CELL_SIZE + 10
+    self.rect.y = 5 + pos[0] * CELL_SIZE + 10
     self.pos = pos
     
       
