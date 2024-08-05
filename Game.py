@@ -15,7 +15,9 @@ class Game:
     self.surface = pygame.display.set_mode((WIDTH, HEIGHT))
     self.surface.fill((202,228,241))
 
+
     self.state = [[0]*3 for _ in range(3)]
+    self.moves = 0
     self.make_grid_and_buttons()
     self.initialize_tiles()
 
@@ -94,16 +96,32 @@ class Game:
           if tile.is_clicked():
             valid_action = tile.has_valid_action(self.state)
             if valid_action:
-              x,y = tile.pos
-              new_x, new_y = valid_action
-              self.state[x][y], self.state[new_x][new_y] = self.state[new_x][new_y], self.state[x][y]
-              self.transition(tile, valid_action)
-              self.setTiles()
+              self.state = self.transition(self.state, valid_action)
+              
 
-  def move(self, tile, pos):
-    tile.rect.x = 5 + pos[0] * CELL_SIZE + 10
-    tile.rect.y = 5 + pos[1] * CELL_SIZE + 10
-    tile.pos = pos
+  def transition(self, state, valid_action):
+    tile = valid_action[0]
+    x,y = tile.pos
+    new_x, new_y = valid_action[1]
+    state[x][y], state[new_x][new_y] = state[new_x][new_y], state[x][y]
+
+    tile.move(valid_action[1])
+    self.moves += 1
+
+    return state
+
+  def getValidActions(self):
+    valid_actions = []
+
+    for tile in self.state():
+      valid_action = tile.has_valid_action(self.state)
+      if valid_action:
+        valid_actions.append(valid_action)
+
+    
+
+
+
     
     
         

@@ -1,5 +1,6 @@
 import pygame
 
+CELL_SIZE = 500//3
 class Tile:
   def __init__(self, surface, x,y,width, height, num, pos) -> None:
     self.surface = surface
@@ -46,16 +47,19 @@ class Tile:
     neighbors = self.get_neighbors(state)
 
     if neighbors['top'] is not None and neighbors['top'] == 0:
-        return (x, y - 1)
+        return (self, (x, y - 1))
     if neighbors['bottom'] is not None and neighbors['bottom'] == 0:
-        return (x, y + 1)
+        return (self, (x, y + 1))
     if neighbors['left'] is not None and neighbors['left'] == 0:
-        return (x - 1, y)
+        return (self, (x - 1, y))
     if neighbors['right'] is not None and neighbors['right'] == 0:
-        return (x + 1, y)
+        return (self, (x + 1, y))
     return None
 
-  
+  def move(self,pos):
+    self.rect.x = 5 + pos[0] * CELL_SIZE + 10
+    self.rect.y = 5 + pos[1] * CELL_SIZE + 10
+    self.pos = pos
     
       
     
