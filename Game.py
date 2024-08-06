@@ -20,12 +20,8 @@ class Game:
     self.surface = pygame.display.set_mode((WIDTH, HEIGHT))
     self.surface.fill((202,228,241))
 
-
     self.moves = 0
     self.make_grid_and_buttons()
-    # self.state = [[0]*3 for _ in range(3)]
-    # self.initialize_tiles()
-    # print(self.getValidActions())
 
 
   def play(self):
@@ -88,7 +84,6 @@ class Game:
   def new_game(self):
     self.state = [[0]*3 for _ in range(3)]
     self.initialize_tiles()
-
     self.playing = True
   
   def update(self):
@@ -96,6 +91,7 @@ class Game:
     self.make_grid_and_buttons()
 
     if self.AI:
+      # Get a sequence of actions and play them one by one?
       action = self.getNextAction()
       self.state = self.transition(self.state, action)
       
