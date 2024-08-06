@@ -3,9 +3,9 @@ import numpy as np
 from numpy.typing import NDArray
 
 
-class State_Node:
+class StateNode:
 
-    def __init__(self, state: str, parent: State_Node = None):
+    def __init__(self, state: str, parent: StateNode = None):
         self.state = state
         while not self.validate_state():
             self.state = input("State not valid, please reenter")
@@ -21,3 +21,7 @@ class State_Node:
             if not letter.isdigit():
                 return False
         return True
+
+    def get_neighbors(self):
+        pass
+
