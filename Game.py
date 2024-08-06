@@ -5,6 +5,7 @@ import numpy as np
 import random
 
 from Tile import Tile
+from StateNode import StateNode
 
 WIDTH = 750
 HEIGHT = 510
@@ -12,10 +13,11 @@ CELL_SIZE = 500 // 3
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, start_state: StateNode = None):
         pygame.init()
         self.playing = True
         self.AI = False
+        self.start_state = start_state
 
         self.clock = pygame.time.Clock()
         self.surface = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -75,13 +77,17 @@ class Game:
         x_offset = 5
         y_offset = 5
 
-        random_state = np.random.permutation(9).reshape(3, 3)  # should remove this?
+        if self.start_state:
+            state = self.start_state.numpy_format()
+        else:
+            state = StateNode.randomState().numpy_format() 
+            
         for i in range(3):
             for j in range(3):
-                if random_state[i][j] != 0:
+                if state[i][j] != 0:
                     self.state[i][j] = Tile(surface=self.surface, x=x_offset + j * CELL_SIZE + 10,
                                             y=y_offset + i * CELL_SIZE + 10, width=CELL_SIZE - 2 * 10,
-                                            height=CELL_SIZE - 2 * 10, num=random_state[i][j], pos=(i, j))
+                                            height=CELL_SIZE - 2 * 10, num=state[i][j], pos=(i, j))
 
         self.state = np.array(self.state)
 
@@ -103,13 +109,15 @@ class Game:
             for tile in row:
                 if tile != 0:
                     tile.draw()
-                    if self.AI and tile.is_clicked():
+                    if not self.AI and tile.is_clicked():
                         valid_action = tile.has_valid_action(self.state)
                         if valid_action:
                             self.state = self.transition(self.state, valid_action)
 
         pygame.display.update()
-        self.clock.tick(5)
+
+        if self.AI:
+          self.clock.tick(5)
 
     def transition(self, state, valid_action):
         tile = valid_action[0]

@@ -4,7 +4,6 @@ from numpy.typing import NDArray
 
 
 class StateNode:
-
     def __init__(self, state: str, parent: StateNode = None):
         self.state = state
         while not self.validate_state():
