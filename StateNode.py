@@ -19,7 +19,17 @@ class StateNode:
         ls = [0] * 9
         temp = self.state
         i = 0
-        while i <= 9:
+
+        length = len(str(temp))
+
+        # length check
+        if length != 9:
+            if length == 8:
+                ls[0] = 1
+            else:
+                return False
+
+        while i <= length:
             digit = temp % 10
             if digit > 8:
                 return False
@@ -40,6 +50,8 @@ class StateNode:
     def get_neighbors(self) -> list[StateNode]:
         neighbors = []
         temp = str(self.state)
+        if len(temp) == 8:
+            temp = '0' + temp
         i = temp.index('0')
         if i == 0:
             neighbors.append(StateNode(int(self.__swap(temp, i, i + 1)), self))

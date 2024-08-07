@@ -1,5 +1,6 @@
 from SearchStrategyInterface import SearchStrategyInterface
 from StateNode import StateNode
+import time
 
 
 class AlgorithmHandler:
@@ -13,7 +14,8 @@ class AlgorithmHandler:
     def __goal_test(self, potential_goal: StateNode) -> bool:
         return potential_goal.get_state() == 12345678
 
-    def do_algorithm(self, initial_state: StateNode):
+    def do_algorithm(self, initial_state: StateNode) -> (StateNode, int, float):
+        begin = time.time()
 
         self.strategy.create_frontier(initial_state)
         explored_set = set()
@@ -23,8 +25,9 @@ class AlgorithmHandler:
             explored_set.add(next_state)
 
             if self.__goal_test(next_state):
-                #number_of_expanded_nodes = len(explored_set)
-                return next_state  # ?
+                end = time.time()
+                running_time = end - begin
+                return next_state, len(explored_set), running_time
 
             for neighbor in next_state.get_neighbors():
                 self.strategy.check_neighbor_state(neighbor, explored_set)
