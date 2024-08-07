@@ -19,3 +19,6 @@ class SearchStrategyInterface(ABC):
         pass
         # all actions require frontier list which can be accessed from "self"
         # only need explored set in if statement
+    @abstractmethod
+    def is_frontier_empty(self) -> bool:
+        pass
