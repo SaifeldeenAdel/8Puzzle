@@ -4,7 +4,6 @@ from numpy.typing import NDArray
 
 
 class StateNode:
-
     def __init__(self, state: int , parent: StateNode = None):
         self.state = state
         while not self.validate_state():
@@ -35,8 +34,6 @@ class StateNode:
         str_state = list(string)
         str_state[i], str_state[j] = str_state[j], str_state[i]
         return str(str_state)
-
-
 
     def get_neighbors(self) -> list[StateNode]:
         neighbors = []
@@ -77,4 +74,6 @@ class StateNode:
             neighbors.append(StateNode(int(self.__swap(temp, i, i-3)), self))
         return neighbors
         
-
+    def __repr__(self) -> str:
+        return str(self.numpy_format())
+  

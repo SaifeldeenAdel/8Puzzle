@@ -4,16 +4,16 @@ from queue import Queue
 from typing import Set
 
 class BfsStrategy(SearchStrategyInterface):
-    def __init__(self):
-        self.queue = None
-
+    def __init__(self, initial_state):
+        super().__init__(initial_state=initial_state)
+        
     def create_frontier(self, initial_state: StateNode):
-        # Declare an empty queue
-        self.queue = Queue()
+        # Declare an empty frontier
+        self.frontier = Queue()
 
     def get_next_state(self) -> StateNode:
         return self.queue.get()  # .get == .dequeue
 
-    def check_neighbor_state(self,neighbor : StateNode,explored_set: Set[StateNode]):
-        if neighbor in self.queue or neighbor in explored_set:
+    def check_neighbor_state(self,neighbor : StateNode):
+        if neighbor in self.queue or neighbor in self.explored_set:
             self.queue.put(neighbor)
