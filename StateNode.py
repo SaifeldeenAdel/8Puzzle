@@ -4,22 +4,33 @@ from numpy.typing import NDArray
 
 
 class StateNode:
-    def __init__(self, state: str, parent: StateNode = None):
+
+    def __init__(self, state: int , parent: StateNode = None):
         self.state = state
         while not self.validate_state():
             self.state = input("State not valid, please reenter")
         self.parent = parent
 
     def numpy_format(self) -> NDArray[np.int64]:
-        return np.array([int(letter) for letter in self.state]).reshape(3, 3)
+        
+        return np.array([int(letter) for letter in str(self.state)]).reshape(3, 3)
 
     def validate_state(self):
-        if len(self.state) != 9:
-            return False
-        for letter in self.state:
-            if not letter.isdigit():
+        ls = [0] * 9
+        temp = self.state
+        i = 0
+        while i <= 9:
+            digit = temp % 10
+            if digit > 8:
                 return False
-        return True
+            ls[digit] = 1
+            temp = temp //10
+            i+=1
+        if 0 in ls: 
+            return False
+        else: return True
+
+
 
     def get_neighbors(self):
         pass
