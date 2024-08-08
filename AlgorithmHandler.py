@@ -14,7 +14,7 @@ class AlgorithmHandler:
     def __goal_test(self, potential_goal: StateNode) -> bool:
         return potential_goal.get_state() == 12345678
 
-    def do_algorithm(self, initial_state: StateNode) -> (StateNode, int, float):
+    def do_algorithm(self, initial_state: StateNode) -> (StateNode, int, float): # type: ignore
         begin = time.time()
 
         self.strategy.create_frontier(initial_state)

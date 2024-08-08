@@ -12,8 +12,12 @@ class StateNode:
         self.parent = parent
 
     def numpy_format(self) -> NDArray[np.int64]:
+        if len(str(self.state)) == 8:
+            print_state = '0' + str(self.state)
+        else:
+            print_state = str(self.state)
 
-        return np.array([int(letter) for letter in str(self.state)]).reshape(3, 3)
+        return np.array([int(letter) for letter in print_state]).reshape(3, 3)
 
     def validate_state(self) -> bool:
         ls = [0] * 9
@@ -23,13 +27,10 @@ class StateNode:
         length = len(str(temp))
 
         # length check
-        if length != 9:
-            if length == 8:
-                ls[0] = 1
-            else:
-                return False
+        if length>9:
+            return False
 
-        while i <= length:
+        while i <= 9:
             digit = temp % 10
             if digit > 8:
                 return False
