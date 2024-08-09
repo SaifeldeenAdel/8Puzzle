@@ -4,6 +4,8 @@ import pygame
 import numpy as np
 import random
 
+import numpy.typing as NDarray
+from AStarStrategy import AStarStrategy
 from BfsStrategy import BfsStrategy
 from Tile import Tile
 from StateNode import StateNode
@@ -18,6 +20,54 @@ BFS_mode = 1
 DFS_mode = 2
 L1_mode = 3
 L2_mode = 4
+
+
+def get_hypo(state: str, num: int) -> int:
+    goal_state = "012345678"
+    goal_pos = goal_state.index(str(num))
+    state_pos = state.index(str(num))
+    y_goal = goal_pos // 3
+    x_goal = goal_pos % 3
+    y_state = state_pos // 3
+    x_state = state_pos % 3
+    return (y_goal - y_state) ** 2 + (x_goal - x_state) ** 2
+
+
+def get_man_diff(state: str, num: int) -> int:
+    goal_state = "012345678"
+    goal_pos = goal_state.index(str(num))
+    state_pos = state.index(str(num))
+    y_goal = goal_pos // 3
+    x_goal = goal_pos % 3
+    y_state = state_pos // 3
+    x_state = state_pos % 3
+    return abs(y_goal - y_state) + abs(x_goal - x_state)
+
+
+def heuristic1(state_node: StateNode) -> int:
+    # get the heuristic value of the initial state
+    state_str = str(state_node.get_state())
+    length = len(state_str)
+    h = 0
+    if length == 8:
+        state_str = '0' + state_str
+
+    for i in range(9):
+        h = h + get_man_diff(state_str, i)
+    return h
+
+
+def heuristic2(state_node: StateNode) -> int:
+    # get the heuristic value of the initial state
+    state_str = str(state_node.get_state())
+    length = len(state_str)
+    h = 0
+    if length == 8:
+        state_str = '0' + state_str
+
+    for i in range(9):
+        h = h + get_hypo(state_str, i)
+    return h
 
 
 class Game:
@@ -118,7 +168,6 @@ class Game:
         if self.AI_mode:
             if self.AI_mode == BFS_mode:
                 # Create BFS Strategy and run algo function
-                print("Do we go here?")
                 handler = AlgorithmHandler(BfsStrategy(self.start_state))
                 goal_state, moves, running_time = handler.do_algorithm(self.start_state)
                 print(running_time)
@@ -127,10 +176,17 @@ class Game:
                 handler = AlgorithmHandler(dfs)
                 goal_state, moves, running_time = handler.do_algorithm(self.start_state)
             elif self.AI_mode == L1_mode:
-                print("l1mode")
+                print("ASTARL1")
+                A_star_l1 = AStarStrategy(self.start_state, heuristic1)
+                handler = AlgorithmHandler(A_star_l1)
+                goal_state, moves, running_time = handler.do_algorithm(self.start_state)
+                print(running_time)
             elif self.AI_mode == L2_mode:
                 print("l2mode")
-
+                A_star_l2 = AStarStrategy(self.start_state, heuristic2)
+                handler = AlgorithmHandler(A_star_l2)
+                goal_state, moves, running_time = handler.do_algorithm(self.start_state)
+                print(running_time)
             self.sequence = self.get_state_sequence(goal_state)
 
             print("Total Moves: ", len(self.sequence))

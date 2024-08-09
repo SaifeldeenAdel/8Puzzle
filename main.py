@@ -2,7 +2,7 @@ from Game import Game
 from StateNode import StateNode
 from DfsStrategy import DfsStrategy
 
-s = StateNode(182043765, depth=0)
+s = StateNode(312645708, depth=0)
 #  182043765
 #  312645708
 game = Game(s)
