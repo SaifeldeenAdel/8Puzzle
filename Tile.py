@@ -4,19 +4,19 @@ CELL_SIZE = 500 // 3
 
 
 class Tile:
-    def __init__(self, surface, x, y, width, height, num, pos) -> None:
+    def __init__(self, surface, x =None, y=None, width=None, height=None, num=None, pos =None) -> None:
         self.surface = surface
         self.val = num
         self.pos = pos
-
+        self.text = None
         self.rect = pygame.Rect(x, y, width, height)
 
     def draw(self):
         font = pygame.font.Font(None, 45)
-        text = font.render(str(self.val), True, (255, 255, 255))
+        self.text = font.render(str(self.val), True, (255, 255, 255))
 
         pygame.draw.rect(self.surface, (50, 50, 155), self.rect)
-        self.surface.blit(text, text.get_rect(center=self.rect.center))
+        self.surface.blit(self.text, self.text.get_rect(center=self.rect.center))
 
     def is_clicked(self):
         if self.rect.collidepoint(pygame.mouse.get_pos()):
@@ -47,16 +47,22 @@ class Tile:
         neighbors = self.get_neighbors(state)
 
         if neighbors['top'] is not None and neighbors['top'] == 0:
-            return (self, (x, y - 1))
+            return self, (x, y - 1)
         if neighbors['bottom'] is not None and neighbors['bottom'] == 0:
-            return (self, (x, y + 1))
+            return self, (x, y + 1)
         if neighbors['left'] is not None and neighbors['left'] == 0:
-            return (self, (x - 1, y))
+            return self, (x - 1, y)
         if neighbors['right'] is not None and neighbors['right'] == 0:
-            return (self, (x + 1, y))
+            return self, (x + 1, y)
         return None
 
     def move(self, pos):
         self.rect.x = 5 + pos[1] * CELL_SIZE + 10
         self.rect.y = 5 + pos[0] * CELL_SIZE + 10
         self.pos = pos
+
+    def set_val(self,val):
+        self.val = val
+
+    def __repr__(self) -> str:
+        return f"{self.pos}: {self.val}"
