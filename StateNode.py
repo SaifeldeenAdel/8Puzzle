@@ -111,3 +111,7 @@ class StateNode:
         if isinstance(other, StateNode):
             return self.state == other.state
         return False
+
+    def __lt__(self, other):
+        # Define how to compare two StateNode objects (e.g., by their state)
+        return self.state < other.state  # or another logic depending on your needs
