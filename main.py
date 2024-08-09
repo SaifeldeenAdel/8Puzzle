@@ -1,14 +1,15 @@
 from Game import Game
 from StateNode import StateNode
-from DFS import DFS
+from DfsStrategy import DfsStrategy
 
 s = StateNode(182043765, depth=0)
-
+#  182043765
+#  312645708
 game = Game(s)
 
 while True:
-  game.new_game()
-  game.play()
+    game.new_game()
+    game.play()
 
 # s = StateNode(1234568)
 # n = s.numpy_format()

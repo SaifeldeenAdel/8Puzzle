@@ -4,19 +4,20 @@ import pygame
 import numpy as np
 import random
 
+from BfsStrategy import BfsStrategy
 from Tile import Tile
 from StateNode import StateNode
-from DFS import DFS
+from DfsStrategy import DfsStrategy
 from AlgorithmHandler import AlgorithmHandler
 
 WIDTH = 750
 HEIGHT = 510
 CELL_SIZE = 500 // 3
 
-BFS_mode = 0
-DFS_mode = 1
-L1_mode = 2
-L2_mode = 3
+BFS_mode = 1
+DFS_mode = 2
+L1_mode = 3
+L2_mode = 4
 
 
 class Game:
@@ -26,7 +27,7 @@ class Game:
         self.AI_mode = None
         self.sequence = None
         self.moves = 0
-        
+
         self.start_state = start_state
         self.current_state = self.start_state
         self.tiles = {}
@@ -60,7 +61,6 @@ class Game:
 
                 if self.l2_btn.collidepoint(event.pos):
                     self.AI_mode = L2_mode
-                    
 
                 if self.new_game_btn.collidepoint(event.pos):
                     self.playing = False
@@ -92,17 +92,17 @@ class Game:
         self.new_game_btn = self.make_button("New Game", 560, 340, 148, 46)
 
     def create_tiles(self):
-        CELL_SIZE = 500 // 3
-        for i in range(1,9):
-            self.tiles[i] = Tile(surface=self.surface,x=1, y=1, width=CELL_SIZE - 2 * 10, height=CELL_SIZE - 2 * 10, num=i)
-        
+        cell_size = 500 // 3
+        for i in range(1, 9):
+            self.tiles[i] = Tile(surface=self.surface, x=1, y=1, width=cell_size - 2 * 10, height=cell_size - 2 * 10,
+                                 num=i)
+
     def set_tiles(self, state: StateNode):
         for i, row in enumerate(state.numpy_format()):
             for j, col in enumerate(row):
-              if col != 0:
-                self.tiles[col].move((i,j))
-                self.tiles[col].set_val(col)
-              
+                if col != 0:
+                    self.tiles[col].move((i, j))
+                    self.tiles[col].set_val(col)
 
     def new_game(self):
         self.state = [[0] * 3 for _ in range(3)]
@@ -118,29 +118,33 @@ class Game:
         if self.AI_mode:
             if self.AI_mode == BFS_mode:
                 # Create BFS Strategy and run algo function
-                pass
+                print("Do we go here?")
+                handler = AlgorithmHandler(BfsStrategy(self.start_state))
+                goal_state, moves, running_time = handler.do_algorithm(self.start_state)
+                print(running_time)
             elif self.AI_mode == DFS_mode:
-                dfs = DFS(self.start_state)
+                dfs = DfsStrategy(self.start_state)
                 handler = AlgorithmHandler(dfs)
                 goal_state, moves, running_time = handler.do_algorithm(self.start_state)
             elif self.AI_mode == L1_mode:
-                pass
+                print("l1mode")
             elif self.AI_mode == L2_mode:
-                pass
+                print("l2mode")
 
             self.sequence = self.get_state_sequence(goal_state)
+
             print("Total Moves: ", len(self.sequence))
             # print(self.sequence)
             self.AI_mode = None
             self.moves = 0
-        
+
         if self.sequence and self.moves < len(self.sequence):
-          self.set_tiles(self.sequence[self.moves])
-          self.moves += 1
-          self.clock.tick(5)
-        
-        for k,tile in self.tiles.items():
-          tile.draw()
+            self.set_tiles(self.sequence[self.moves])
+            self.moves += 1
+            self.clock.tick(5)
+
+        for k, tile in self.tiles.items():
+            tile.draw()
 
         pygame.display.update()
 
@@ -165,7 +169,7 @@ class Game:
                         valid_actions.append(valid_action)
         return valid_actions
 
-    def get_state_sequence(self, goal:StateNode):
+    def get_state_sequence(self, goal: StateNode):
         curr = goal
         sequence = []
         while curr is not None:
@@ -174,4 +178,3 @@ class Game:
             curr = curr.parent
         sequence.reverse()
         return sequence
-    

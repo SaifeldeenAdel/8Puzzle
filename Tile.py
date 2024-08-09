@@ -47,13 +47,13 @@ class Tile:
         neighbors = self.get_neighbors(state)
 
         if neighbors['top'] is not None and neighbors['top'] == 0:
-            return (self, (x, y - 1))
+            return self, (x, y - 1)
         if neighbors['bottom'] is not None and neighbors['bottom'] == 0:
-            return (self, (x, y + 1))
+            return self, (x, y + 1)
         if neighbors['left'] is not None and neighbors['left'] == 0:
-            return (self, (x - 1, y))
+            return self, (x - 1, y)
         if neighbors['right'] is not None and neighbors['right'] == 0:
-            return (self, (x + 1, y))
+            return self, (x + 1, y)
         return None
 
     def move(self, pos):
