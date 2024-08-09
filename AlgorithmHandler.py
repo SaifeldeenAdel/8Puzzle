@@ -31,7 +31,7 @@ class AlgorithmHandler:
             if self.__goal_test(next_state):
                 end = time.time()
                 running_time = end - begin
-                return next_state, len(explored_set), running_time
+                return next_state, len(explored_set)-1, running_time
 
             for neighbor in next_state.get_neighbors():
                 self.strategy.check_neighbor_state(neighbor, explored_set)
