@@ -13,5 +13,8 @@ class DFS(SearchStrategyInterface):
     return self.frontier.pop()
   
   def check_neighbor_state(self, neighbor: StateNode, explored_set: Set[StateNode]):
-    if neighbor not in self.frontier or neighbor not in explored_set:
+    if not (neighbor in self.frontier or neighbor in explored_set):
       self.frontier.append(neighbor)
+
+  def is_frontier_empty(self) -> bool:
+      return len(self.frontier) == 0

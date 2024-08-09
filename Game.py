@@ -6,30 +6,39 @@ import random
 
 from Tile import Tile
 from StateNode import StateNode
+from DFS import DFS
+from AlgorithmHandler import AlgorithmHandler
 
 WIDTH = 750
 HEIGHT = 510
 CELL_SIZE = 500 // 3
+
+BFS_mode = 0
+DFS_mode = 1
+L1_mode = 2
+L2_mode = 3
 
 
 class Game:
     def __init__(self, start_state: StateNode = None):
         pygame.init()
         self.playing = True
-        self.AI = False
+        self.AI_mode = None
+        self.sequence = None
+        self.moves = 0
+        
         self.start_state = start_state
+        self.current_state = self.start_state
+        self.tiles = {}
 
         self.clock = pygame.time.Clock()
         self.surface = pygame.display.set_mode((WIDTH, HEIGHT))
         self.surface.fill((202, 228, 241))
-
-        self.moves = 0
         self.make_grid_and_buttons()
 
     def play(self):
         while self.playing:
             self.check_events()
-            self.check_new_game()
             self.update()
 
         return
@@ -40,16 +49,23 @@ class Game:
                 pygame.quit()
                 quit(0)
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.solve_btn.collidepoint(event.pos):
-                    self.AI = True
+                if self.bfs_btn.collidepoint(event.pos):
+                    self.AI_mode = BFS_mode
+
+                if self.dfs_btn.collidepoint(event.pos):
+                    self.AI_mode = DFS_mode
+
+                if self.l1_btn.collidepoint(event.pos):
+                    self.AI_mode = L1_mode
+
+                if self.l2_btn.collidepoint(event.pos):
+                    self.AI_mode = L2_mode
+                    
 
                 if self.new_game_btn.collidepoint(event.pos):
                     self.playing = False
                     print("New Game!")
                     # call new game?
-
-    def check_new_game(self):
-        return
 
     def make_button(self, text, x, y, width, height):
         rect = pygame.Rect(x, y, width, height)
@@ -69,55 +85,63 @@ class Game:
             pygame.draw.line(self.surface, (0, 0, 0), (x_offset + i * CELL_SIZE, y_offset),
                              (x_offset + i * CELL_SIZE, y_offset + 500), 2)
 
-        self.solve_btn = self.make_button("Solve", 560, 164, 148, 46)
-        self.new_game_btn = self.make_button("New Game", 560, 240, 148, 46)
+        self.dfs_btn = self.make_button("DFS", 560, 60, 148, 46)
+        self.bfs_btn = self.make_button("BFS", 560, 130, 148, 46)
+        self.l1_btn = self.make_button("A* L1", 560, 200, 148, 46)
+        self.l2_btn = self.make_button("A* L2", 560, 270, 148, 46)
+        self.new_game_btn = self.make_button("New Game", 560, 340, 148, 46)
 
-    def initialize_tiles(self):
+    def create_tiles(self):
         CELL_SIZE = 500 // 3
-        x_offset = 5
-        y_offset = 5
-
-        if self.start_state:
-            state = self.start_state.numpy_format()
-        else:
-            state = StateNode.randomState().numpy_format() 
-            
-        for i in range(3):
-            for j in range(3):
-                if state[i][j] != 0:
-                    self.state[i][j] = Tile(surface=self.surface, x=x_offset + j * CELL_SIZE + 10,
-                                            y=y_offset + i * CELL_SIZE + 10, width=CELL_SIZE - 2 * 10,
-                                            height=CELL_SIZE - 2 * 10, num=state[i][j], pos=(i, j))
-
-        self.state = np.array(self.state)
+        for i in range(1,9):
+            self.tiles[i] = Tile(surface=self.surface,x=1, y=1, width=CELL_SIZE - 2 * 10, height=CELL_SIZE - 2 * 10, num=i)
+        
+    def set_tiles(self, state: StateNode):
+        for i, row in enumerate(state.numpy_format()):
+            for j, col in enumerate(row):
+              if col != 0:
+                self.tiles[col].move((i,j))
+                self.tiles[col].set_val(col)
+              
 
     def new_game(self):
         self.state = [[0] * 3 for _ in range(3)]
-        self.initialize_tiles()
+
+        self.create_tiles()
+        self.set_tiles(self.start_state)
         self.playing = True
 
     def update(self):
         self.surface.fill((202, 228, 241))
         self.make_grid_and_buttons()
 
-        if self.AI:
-            # Get a sequence of actions and play them one by one?
-            action = self.getNextAction()
-            self.state = self.transition(self.state, action)
+        if self.AI_mode:
+            if self.AI_mode == BFS_mode:
+                # Create BFS Strategy and run algo function
+                pass
+            elif self.AI_mode == DFS_mode:
+                dfs = DFS(self.start_state)
+                handler = AlgorithmHandler(dfs)
+                goal_state, moves, running_time = handler.do_algorithm(self.start_state)
+            elif self.AI_mode == L1_mode:
+                pass
+            elif self.AI_mode == L2_mode:
+                pass
 
-        for row in self.state:
-            for tile in row:
-                if tile != 0:
-                    tile.draw()
-                    if not self.AI and tile.is_clicked():
-                        valid_action = tile.has_valid_action(self.state)
-                        if valid_action:
-                            self.state = self.transition(self.state, valid_action)
+            self.sequence = self.get_state_sequence(goal_state)
+            # print(self.sequence)
+            self.AI_mode = None
+            self.moves = 0
+        
+        if self.sequence and self.moves < len(self.sequence):
+          self.set_tiles(self.sequence[self.moves])
+          self.moves += 1
+          self.clock.tick(2)
+        
+        for k,tile in self.tiles.items():
+          tile.draw()
 
         pygame.display.update()
-
-        if self.AI:
-          self.clock.tick(5)
 
     def transition(self, state, valid_action):
         tile = valid_action[0]
@@ -140,6 +164,13 @@ class Game:
                         valid_actions.append(valid_action)
         return valid_actions
 
-    def getNextAction(self):
-        rnd = random.randint(0, len(self.getValidActions()) - 1)
-        return self.getValidActions()[rnd]
+    def get_state_sequence(self, goal:StateNode):
+        curr = goal
+        sequence = []
+        while curr is not None:
+            # print(sequence)
+            sequence.append(curr)
+            curr = curr.parent
+        sequence.reverse()
+        return sequence
+    

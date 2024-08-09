@@ -21,8 +21,10 @@ class AlgorithmHandler:
         explored_set = set()
 
         while not self.strategy.is_frontier_empty():
+            print(len(self.strategy.frontier))
             next_state: StateNode = self.strategy.get_next_state()
             explored_set.add(next_state)
+            print(len(self.strategy.frontier))
 
             if self.__goal_test(next_state):
                 end = time.time()
