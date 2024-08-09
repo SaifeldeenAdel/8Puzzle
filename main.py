@@ -2,7 +2,8 @@ from Game import Game
 from StateNode import StateNode
 from DFS import DFS
 
-s = StateNode(312645708)
+s = StateNode(182043765, depth=0)
+
 game = Game(s)
 
 while True:

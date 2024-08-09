@@ -129,6 +129,7 @@ class Game:
                 pass
 
             self.sequence = self.get_state_sequence(goal_state)
+            print("Total Moves: ", len(self.sequence))
             # print(self.sequence)
             self.AI_mode = None
             self.moves = 0
@@ -136,7 +137,7 @@ class Game:
         if self.sequence and self.moves < len(self.sequence):
           self.set_tiles(self.sequence[self.moves])
           self.moves += 1
-          self.clock.tick(2)
+          self.clock.tick(5)
         
         for k,tile in self.tiles.items():
           tile.draw()

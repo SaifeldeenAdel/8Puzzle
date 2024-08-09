@@ -21,11 +21,8 @@ class AlgorithmHandler:
         explored_set = set()
 
         while not self.strategy.is_frontier_empty():
-            print(len(self.strategy.frontier))
             next_state: StateNode = self.strategy.get_next_state()
             explored_set.add(next_state)
-            print(len(self.strategy.frontier))
-
             if self.__goal_test(next_state):
                 end = time.time()
                 running_time = end - begin
@@ -33,3 +30,4 @@ class AlgorithmHandler:
 
             for neighbor in next_state.get_neighbors():
                 self.strategy.check_neighbor_state(neighbor, explored_set)
+            print(len(self.strategy.frontier))

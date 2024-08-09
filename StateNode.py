@@ -4,12 +4,12 @@ from numpy.typing import NDArray
 
 
 class StateNode:
-
-    def __init__(self, state: int, parent: StateNode = None):
+    def __init__(self, state: int, parent: StateNode = None, depth = 0):
         self.state = state
         while not self.validate_state():
             self.state = input("State not valid, please reenter")
         self.parent = parent
+        self.depth = depth
 
     def numpy_format(self) -> NDArray[np.int64]:
         if len(str(self.state)) == 8:
@@ -55,38 +55,38 @@ class StateNode:
             temp = '0' + temp
         i = temp.index('0')
         if i == 0:
-            neighbors.append(StateNode(int(self.__swap(temp, i, i + 1)), self))
-            neighbors.append(StateNode(int(self.__swap(temp, i, i + 3)), self))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i + 1)), parent= self, depth= self.depth + 1))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i + 3)), parent= self, depth= self.depth + 1))
         elif i == 1:
-            neighbors.append(StateNode(int(self.__swap(temp, i, i + 1)), self))
-            neighbors.append(StateNode(int(self.__swap(temp, i, i + 3)), self))
-            neighbors.append(StateNode(int(self.__swap(temp, i, i - 1)), self))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i + 1)), parent= self, depth= self.depth + 1))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i + 3)), parent= self, depth= self.depth + 1))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i - 1)), parent= self, depth= self.depth + 1))
         elif i == 2:
-            neighbors.append(StateNode(int(self.__swap(temp, i, i + 3)), self))
-            neighbors.append(StateNode(int(self.__swap(temp, i, i - 1)), self))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i + 3)), parent= self, depth= self.depth + 1))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i - 1)), parent= self, depth= self.depth + 1))
         elif i == 3:
-            neighbors.append(StateNode(int(self.__swap(temp, i, i + 1)), self))
-            neighbors.append(StateNode(int(self.__swap(temp, i, i + 3)), self))
-            neighbors.append(StateNode(int(self.__swap(temp, i, i - 3)), self))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i + 1)), parent= self, depth= self.depth + 1))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i + 3)), parent= self, depth= self.depth + 1))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i - 3)), parent= self, depth= self.depth + 1))
         elif i == 4:
-            neighbors.append(StateNode(int(self.__swap(temp, i, i + 1)), self))
-            neighbors.append(StateNode(int(self.__swap(temp, i, i + 3)), self))
-            neighbors.append(StateNode(int(self.__swap(temp, i, i - 3)), self))
-            neighbors.append(StateNode(int(self.__swap(temp, i, i - 1)), self))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i + 1)), parent= self, depth= self.depth + 1))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i + 3)), parent= self, depth= self.depth + 1))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i - 3)), parent= self, depth= self.depth + 1))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i - 1)), parent= self, depth= self.depth + 1))
         elif i == 5:
-            neighbors.append(StateNode(int(self.__swap(temp, i, i - 1)), self))
-            neighbors.append(StateNode(int(self.__swap(temp, i, i + 3)), self))
-            neighbors.append(StateNode(int(self.__swap(temp, i, i - 3)), self))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i - 1)), parent= self, depth= self.depth + 1))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i + 3)), parent= self, depth= self.depth + 1))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i - 3)), parent= self, depth= self.depth + 1))
         elif i == 6:
-            neighbors.append(StateNode(int(self.__swap(temp, i, i + 1)), self))
-            neighbors.append(StateNode(int(self.__swap(temp, i, i - 3)), self))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i + 1)), parent= self, depth= self.depth + 1))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i - 3)), parent= self, depth= self.depth + 1))
         elif i == 7:
-            neighbors.append(StateNode(int(self.__swap(temp, i, i + 1)), self))
-            neighbors.append(StateNode(int(self.__swap(temp, i, i - 3)), self))
-            neighbors.append(StateNode(int(self.__swap(temp, i, i - 1)), self))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i + 1)), parent= self, depth= self.depth + 1))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i - 3)), parent= self, depth= self.depth + 1))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i - 1)), parent= self, depth= self.depth + 1))
         elif i == 8:
-            neighbors.append(StateNode(int(self.__swap(temp, i, i - 1)), self))
-            neighbors.append(StateNode(int(self.__swap(temp, i, i - 3)), self))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i - 1)), parent= self, depth= self.depth + 1))
+            neighbors.append(StateNode(int(self.__swap(temp, i, i - 3)), parent= self, depth= self.depth + 1))
         return neighbors
         
     def __repr__(self) -> str:
@@ -98,3 +98,17 @@ class StateNode:
 
     def get_parent(self) -> StateNode:
         return self.parent
+    
+    def set_depth(self, n):
+        self.depth = n
+
+    def get_depth(self) -> int:
+        return self.depth
+    
+    def __hash__(self):
+      return hash((self.state)) 
+    
+    def __eq__(self, other: StateNode) -> bool:
+      if isinstance(other, StateNode):
+          return self.state == other.state
+      return False
