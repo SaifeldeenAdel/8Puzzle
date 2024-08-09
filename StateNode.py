@@ -46,7 +46,7 @@ class StateNode:
 
         str_state = list(string)
         str_state[i], str_state[j] = str_state[j], str_state[i]
-        return str(str_state)
+        return "".join(str_state)
 
     def get_neighbors(self) -> list[StateNode]:
         neighbors = []
@@ -90,7 +90,7 @@ class StateNode:
         return neighbors
         
     def __repr__(self) -> str:
-        return str(self.numpy_format())
+        return str(self.numpy_format()) + "\n"
   
 
     def get_state(self) -> int:
