@@ -14,8 +14,11 @@ class DfsStrategy(SearchStrategyInterface):
         return self.frontier.pop()
 
     def check_neighbor_state(self, neighbor: StateNode, explored_set: Set[StateNode]):
-        if not (neighbor in self.frontier or neighbor in explored_set or neighbor.depth > 31):
+        if not (neighbor in self.frontier or neighbor in explored_set):
             self.frontier.append(neighbor)
 
     def is_frontier_empty(self) -> bool:
         return len(self.frontier) == 0
+    
+    def __repr__(self) -> str:
+        return "DFS"

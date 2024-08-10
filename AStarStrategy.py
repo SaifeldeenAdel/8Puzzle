@@ -33,4 +33,6 @@ class AStarStrategy(SearchStrategyInterface):
             # pq.heappush(self.frontier, (self.heuristic(neighbor), neighbor))
             self.frontier.push(neighbor, self.heuristic(neighbor) + neighbor.depth)
 
+    def __repr__(self) -> str:
+        return "DFS"
 ## many errors
