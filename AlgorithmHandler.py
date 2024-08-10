@@ -15,22 +15,21 @@ class AlgorithmHandler:
         return potential_goal.get_state() == 12345678
 
     def do_algorithm(self, initial_state: StateNode) -> (StateNode, int, float):  # type: ignore
-        limit = 500
         begin = time.time()
         print("Solving ")
 
         self.strategy.create_frontier(initial_state)
         explored_set = set()
-        i = 0
+
         while not self.strategy.is_frontier_empty():
 
             next_state: StateNode = self.strategy.get_next_state()
-            i += 1
+
             explored_set.add(next_state)
             if self.__goal_test(next_state):
                 end = time.time()
                 running_time = end - begin
-                return next_state, len(explored_set)-1, running_time
+                return next_state, len(explored_set), running_time
 
             for neighbor in next_state.get_neighbors():
                 self.strategy.check_neighbor_state(neighbor, explored_set)

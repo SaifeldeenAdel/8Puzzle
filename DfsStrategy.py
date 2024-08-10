@@ -4,8 +4,6 @@ from typing import Set
 
 
 class DfsStrategy(SearchStrategyInterface):
-    def __init__(self, initial_state):
-        super().__init__(initial_state=initial_state)
 
     def create_frontier(self, initial_state: StateNode):
         self.frontier = [initial_state]
