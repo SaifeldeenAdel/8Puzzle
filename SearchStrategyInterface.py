@@ -5,9 +5,8 @@ from typing import Set
 
 
 class SearchStrategyInterface(ABC):
-    def __init__(self, initial_state):
+    def __init__(self):
         self.frontier = None
-        self.create_frontier(initial_state=initial_state)
 
     @abstractmethod
     def create_frontier(self, initial_state: StateNode):

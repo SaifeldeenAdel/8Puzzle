@@ -8,9 +8,9 @@ from typing import Set
 
 
 class AStarStrategy(SearchStrategyInterface):
-    def __init__(self, initial_state, heuristic_function):
+    def __init__(self, heuristic_function):
         self.hf = heuristic_function
-        super().__init__(initial_state)
+        super().__init__()
 
     def heuristic(self, *args, **kwargs):
         return self.hf(*args, **kwargs)

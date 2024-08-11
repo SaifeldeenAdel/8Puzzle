@@ -5,9 +5,7 @@ from typing import Set
 
 
 class BfsStrategy(SearchStrategyInterface):
-    def __init__(self, initial_state):
-        super().__init__(initial_state=initial_state)
-        
+
     def create_frontier(self, initial_state: StateNode):
         # create a queue and insert initial state
         self.frontier = deque()

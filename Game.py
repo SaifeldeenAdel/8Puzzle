@@ -21,6 +21,7 @@ DFS_mode = 2
 L1_mode = 3
 L2_mode = 4
 
+
 class Game:
     def __init__(self, start_state: StateNode = None):
         pygame.init()
@@ -114,30 +115,30 @@ class Game:
 
 
         if self.AI_mode:
+            handler = None
             if self.AI_mode == BFS_mode:
-                # Create BFS Strategy and run algo function
-                handler = AlgorithmHandler(BfsStrategy(self.start_state))
-                goal_state, moves, running_time = handler.do_algorithm(self.start_state)
+                bfs = BfsStrategy()
+                handler = AlgorithmHandler(bfs)
 
             elif self.AI_mode == DFS_mode:
-                dfs = DfsStrategy(self.start_state)
+                dfs = DfsStrategy()
                 handler = AlgorithmHandler(dfs)
-                goal_state, moves, running_time = handler.do_algorithm(self.start_state)
 
             elif self.AI_mode == L1_mode:
-                A_star_l1 = AStarStrategy(self.start_state, l1)
+                A_star_l1 = AStarStrategy(l1)
                 handler = AlgorithmHandler(A_star_l1)
-                goal_state, moves, running_time = handler.do_algorithm(self.start_state)
-                
+
             elif self.AI_mode == L2_mode:
-                A_star_l2 = AStarStrategy(self.start_state, l2)
+                A_star_l2 = AStarStrategy(l2)
                 handler = AlgorithmHandler(A_star_l2)
-                goal_state, moves, running_time = handler.do_algorithm(self.start_state)
-                
+
+            goal_state, num_nodes_expanded, running_time = handler.do_algorithm(self.start_state)
             self.sequence = self.get_state_sequence(goal_state)
 
-            print("Total Moves: ", len(self.sequence))
-            print("Solved in ", running_time)
+            print(f"Total Moves: {len(self.sequence) - 1}")
+            print(f"Solved in {running_time: .2f} seconds")
+            print(f"Number of nodes expanded: {num_nodes_expanded}")
+
             self.AI_mode = None
             self.moves = 0
 
