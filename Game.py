@@ -135,12 +135,15 @@ class Game:
                 A_star_l2 = AStarStrategy(l2)
                 handler = AlgorithmHandler(A_star_l2)
 
-            goal_state, num_nodes_expanded, running_time = handler.do_algorithm(self.start_state)
+            goal_state ,num_nodes_expanded, running_time = handler.do_algorithm(self.start_state)
             self.sequence = self.get_state_sequence(goal_state)
+
+            goal_state: StateNode
 
             print(f"Total Moves: {len(self.sequence) - 1}")
             print(f"Solved in {running_time: .2f} seconds")
             print(f"Number of nodes expanded: {num_nodes_expanded}")
+            print(f"Search Depth: {goal_state.get_depth()}")
 
             self.AI_mode = None
             self.moves = 0

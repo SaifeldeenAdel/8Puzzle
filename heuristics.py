@@ -1,6 +1,9 @@
+from math import sqrt
+
 from StateNode import StateNode
 
-def get_hypo(state: str, num: int) -> int:
+
+def get_hypo(state: str, num: int) -> float:
     goal_state = "012345678"
     goal_pos = goal_state.index(str(num))
     state_pos = state.index(str(num))
@@ -8,7 +11,7 @@ def get_hypo(state: str, num: int) -> int:
     x_goal = goal_pos % 3
     y_state = state_pos // 3
     x_state = state_pos % 3
-    return (y_goal - y_state) ** 2 + (x_goal - x_state) ** 2
+    return sqrt((y_goal - y_state) ** 2 + (x_goal - x_state) ** 2)
 
 
 def get_man_diff(state: str, num: int) -> int:
