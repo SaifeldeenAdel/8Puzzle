@@ -1,16 +1,16 @@
 import pygame.display
 import pygame.event
 import pygame
-import numpy as np
-import random
 
-import numpy.typing as NDarray
-from AStarStrategy import AStarStrategy
-from BfsStrategy import BfsStrategy
 from Tile import Tile
 from StateNode import StateNode
-from DfsStrategy import DfsStrategy
+
 from AlgorithmHandler import AlgorithmHandler
+from AStarStrategy import AStarStrategy
+from BfsStrategy import BfsStrategy
+from DfsStrategy import DfsStrategy
+
+from heuristics import l1, l2
 
 WIDTH = 750
 HEIGHT = 510
@@ -20,54 +20,6 @@ BFS_mode = 1
 DFS_mode = 2
 L1_mode = 3
 L2_mode = 4
-
-
-def get_hypo(state: str, num: int) -> int:
-    goal_state = "012345678"
-    goal_pos = goal_state.index(str(num))
-    state_pos = state.index(str(num))
-    y_goal = goal_pos // 3
-    x_goal = goal_pos % 3
-    y_state = state_pos // 3
-    x_state = state_pos % 3
-    return (y_goal - y_state) ** 2 + (x_goal - x_state) ** 2
-
-
-def get_man_diff(state: str, num: int) -> int:
-    goal_state = "012345678"
-    goal_pos = goal_state.index(str(num))
-    state_pos = state.index(str(num))
-    y_goal = goal_pos // 3
-    x_goal = goal_pos % 3
-    y_state = state_pos // 3
-    x_state = state_pos % 3
-    return abs(y_goal - y_state) + abs(x_goal - x_state)
-
-
-def heuristic1(state_node: StateNode) -> int:
-    # get the heuristic value of the initial state
-    state_str = str(state_node.get_state())
-    length = len(state_str)
-    h = 0
-    if length == 8:
-        state_str = '0' + state_str
-
-    for i in range(9):
-        h = h + get_man_diff(state_str, i)
-    return h
-
-
-def heuristic2(state_node: StateNode) -> int:
-    # get the heuristic value of the initial state
-    state_str = str(state_node.get_state())
-    length = len(state_str)
-    h = 0
-    if length == 8:
-        state_str = '0' + state_str
-
-    for i in range(9):
-        h = h + get_hypo(state_str, i)
-    return h
 
 
 class Game:
@@ -112,10 +64,6 @@ class Game:
                 if self.l2_btn.collidepoint(event.pos):
                     self.AI_mode = L2_mode
 
-                if self.new_game_btn.collidepoint(event.pos):
-                    self.playing = False
-                    print("New Game!")
-                    # call new game?
 
     def make_button(self, text, x, y, width, height):
         rect = pygame.Rect(x, y, width, height)
@@ -139,7 +87,6 @@ class Game:
         self.bfs_btn = self.make_button("BFS", 560, 130, 148, 46)
         self.l1_btn = self.make_button("A* L1", 560, 200, 148, 46)
         self.l2_btn = self.make_button("A* L2", 560, 270, 148, 46)
-        self.new_game_btn = self.make_button("New Game", 560, 340, 148, 46)
 
     def create_tiles(self):
         cell_size = 500 // 3
@@ -164,33 +111,37 @@ class Game:
     def update(self):
         self.surface.fill((202, 228, 241))
         self.make_grid_and_buttons()
+        FONT = pygame.font.Font(None, 34) 
+
 
         if self.AI_mode:
+            handler = None
             if self.AI_mode == BFS_mode:
-                # Create BFS Strategy and run algo function
-                handler = AlgorithmHandler(BfsStrategy(self.start_state))
-                goal_state, moves, running_time = handler.do_algorithm(self.start_state)
-                print(running_time)
+                bfs = BfsStrategy()
+                handler = AlgorithmHandler(bfs)
+
             elif self.AI_mode == DFS_mode:
-                dfs = DfsStrategy(self.start_state)
+                dfs = DfsStrategy()
                 handler = AlgorithmHandler(dfs)
-                goal_state, moves, running_time = handler.do_algorithm(self.start_state)
+
             elif self.AI_mode == L1_mode:
-                print("ASTARL1")
-                A_star_l1 = AStarStrategy(self.start_state, heuristic1)
+                A_star_l1 = AStarStrategy(l1)
                 handler = AlgorithmHandler(A_star_l1)
-                goal_state, moves, running_time = handler.do_algorithm(self.start_state)
-                print(running_time)
+
             elif self.AI_mode == L2_mode:
-                print("l2mode")
-                A_star_l2 = AStarStrategy(self.start_state, heuristic2)
+                A_star_l2 = AStarStrategy(l2)
                 handler = AlgorithmHandler(A_star_l2)
-                goal_state, moves, running_time = handler.do_algorithm(self.start_state)
-                print(running_time)
+
+            goal_state ,num_nodes_expanded, running_time = handler.do_algorithm(self.start_state)
             self.sequence = self.get_state_sequence(goal_state)
 
-            print("Total Moves: ", len(self.sequence))
-            # print(self.sequence)
+            goal_state: StateNode
+
+            print(f"Total Moves: {len(self.sequence) - 1}")
+            print(f"Solved in {running_time: .2f} seconds")
+            print(f"Number of nodes expanded: {num_nodes_expanded}")
+            print(f"Search Depth: {goal_state.get_depth()}")
+
             self.AI_mode = None
             self.moves = 0
 
@@ -198,6 +149,10 @@ class Game:
             self.set_tiles(self.sequence[self.moves])
             self.moves += 1
             self.clock.tick(5)
+
+        if self.sequence:
+          text_surface = FONT.render("Moves: " + str(len(self.sequence)), True, (0, 0, 0)) 
+          self.surface.blit(text_surface, (570, 350)) 
 
         for k, tile in self.tiles.items():
             tile.draw()

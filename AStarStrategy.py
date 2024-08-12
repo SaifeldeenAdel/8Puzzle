@@ -8,9 +8,9 @@ from typing import Set
 
 
 class AStarStrategy(SearchStrategyInterface):
-    def __init__(self, initial_state, heuristic_function):
+    def __init__(self, heuristic_function):
         self.hf = heuristic_function
-        super().__init__(initial_state)
+        super().__init__()
 
     def heuristic(self, *args, **kwargs):
         return self.hf(*args, **kwargs)
@@ -33,4 +33,6 @@ class AStarStrategy(SearchStrategyInterface):
             # pq.heappush(self.frontier, (self.heuristic(neighbor), neighbor))
             self.frontier.push(neighbor, self.heuristic(neighbor) + neighbor.depth)
 
+    def __repr__(self) -> str:
+        return "DFS"
 ## many errors
