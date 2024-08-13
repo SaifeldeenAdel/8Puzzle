@@ -64,6 +64,9 @@ class Game:
                 if self.l2_btn.collidepoint(event.pos):
                     self.AI_mode = L2_mode
 
+                if self.new_game_btn.collidepoint(event.pos):
+                    self.new_game()
+
 
     def make_button(self, text, x, y, width, height):
         rect = pygame.Rect(x, y, width, height)
@@ -87,6 +90,7 @@ class Game:
         self.bfs_btn = self.make_button("BFS", 560, 130, 148, 46)
         self.l1_btn = self.make_button("A* L1", 560, 200, 148, 46)
         self.l2_btn = self.make_button("A* L2", 560, 270, 148, 46)
+        self.new_game_btn = self.make_button("New Game", 560, 410, 148, 46)
 
     def create_tiles(self):
         cell_size = 500 // 3
@@ -102,7 +106,7 @@ class Game:
                     self.tiles[col].set_val(col)
 
     def new_game(self):
-        self.state = [[0] * 3 for _ in range(3)]
+        # self.state = [[0] * 3 for _ in range(3)]
 
         self.create_tiles()
         self.set_tiles(self.start_state)
@@ -132,7 +136,7 @@ class Game:
                 A_star_l2 = AStarStrategy(l2)
                 handler = AlgorithmHandler(A_star_l2)
 
-            goal_state ,num_nodes_expanded, running_time = handler.do_algorithm(self.start_state)
+            goal_state ,num_nodes_expanded, running_time, max_depth = handler.do_algorithm(self.start_state)
             self.sequence = self.get_state_sequence(goal_state)
 
             goal_state: StateNode
@@ -140,7 +144,7 @@ class Game:
             print(f"Total Moves: {len(self.sequence) - 1}")
             print(f"Solved in {running_time: .2f} seconds")
             print(f"Number of nodes expanded: {num_nodes_expanded}")
-            print(f"Search Depth: {goal_state.get_depth()}")
+            print(f"Search Depth: {max_depth}")
 
             self.AI_mode = None
             self.moves = 0
@@ -151,7 +155,7 @@ class Game:
             self.clock.tick(5)
 
         if self.sequence:
-          text_surface = FONT.render("Moves: " + str(len(self.sequence)), True, (0, 0, 0)) 
+          text_surface = FONT.render("Moves: " + str(len(self.sequence)-1), True, (0, 0, 0)) 
           self.surface.blit(text_surface, (570, 350)) 
 
         for k, tile in self.tiles.items():
